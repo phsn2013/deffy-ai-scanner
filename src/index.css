@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Pure Black Base */
+    --background: 0 0% 0%;
+    --foreground: 48 100% 70%;
+    
+    /* Gold Metallic */
+    --primary: 48 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --primary-glow: 48 100% 60%;
+    
+    /* Dark Cards */
+    --card: 0 0% 5%;
+    --card-foreground: 48 100% 70%;
+    
+    /* Subtle Borders */
+    --border: 48 100% 20%;
+    --input: 48 100% 25%;
+    
+    /* Accent Gold */
+    --accent: 48 100% 45%;
+    --accent-foreground: 0 0% 0%;
+    
+    /* Muted Elements */
+    --muted: 0 0% 10%;
+    --muted-foreground: 48 50% 60%;
+    
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Popover & Dropdown */
+    --popover: 0 0% 8%;
+    --popover-foreground: 48 100% 70%;
+    
+    /* Secondary */
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 48 100% 70%;
+    
+    /* Ring */
+    --ring: 48 100% 50%;
+    --radius: 1rem;
+    
+    /* Sidebar */
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 48 100% 70%;
+    --sidebar-primary: 48 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 48 100% 70%;
+    --sidebar-border: 48 100% 20%;
+    --sidebar-ring: 48 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-['Orbitron'];
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-wider;
+  }
+}
+
+@layer utilities {
+  .glow-text {
+    text-shadow: 0 0 20px hsl(48 100% 50% / 0.5), 0 0 40px hsl(48 100% 50% / 0.3);
+  }
+  
+  .glow-border {
+    box-shadow: 0 0 20px hsl(48 100% 50% / 0.5), 0 0 40px hsl(48 100% 50% / 0.3);
+  }
+  
+  .glow-strong {
+    box-shadow: 0 0 30px hsl(48 100% 50% / 0.7), 0 0 60px hsl(48 100% 50% / 0.5);
+  }
+  
+  .gradient-gold {
+    background: linear-gradient(135deg, hsl(48 100% 45%), hsl(48 100% 60%));
+  }
+}
