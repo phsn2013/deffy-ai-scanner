@@ -9,7 +9,7 @@ import { CameraCapture } from "@/components/CameraCapture";
 import { ImageUpload } from "@/components/ImageUpload";
 import { AnalysisResult } from "@/components/AnalysisResult";
 import { useChartAnalysis } from "@/hooks/useChartAnalysis";
-import { Sparkles, User, Settings, FileSpreadsheet, HelpCircle, LogOut, UserCircle, BookOpen } from "lucide-react";
+import { Sparkles, User, Settings, FileSpreadsheet, HelpCircle, LogOut, UserCircle, BookOpen, Store } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -126,6 +126,13 @@ const Index = () => {
                 >
                   <BookOpen className="mr-2 h-4 w-4" />
                   <span className="font-bold tracking-wider uppercase text-xs">Estudo</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10"
+                  onClick={() => navigate("/corretoras")}
+                >
+                  <Store className="mr-2 h-4 w-4" />
+                  <span className="font-bold tracking-wider uppercase text-xs">Corretoras</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10"
