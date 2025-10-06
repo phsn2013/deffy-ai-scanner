@@ -96,26 +96,18 @@ const Planilha = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/5 backdrop-blur-xl border-b border-primary/10">
-        <div className="container max-w-7xl mx-auto px-4 py-4">
+      <header className="border-b border-border/30">
+        <div className="container max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate("/")}
-                className="hover:bg-primary/10"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <div>
-                <h1 className="text-xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-glow to-primary tracking-tight">
-                  Dashboard de Trading
-                </h1>
-                <p className="text-muted-foreground text-xs tracking-wider uppercase">
-                  Análise completa de performance
-                </p>
-              </div>
+              <h1 className="text-lg font-bold">Dashboard de Trading</h1>
             </div>
             <PeriodFilter value={selectedPeriod} onChange={setSelectedPeriod} />
           </div>
