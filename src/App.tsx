@@ -7,7 +7,7 @@ import { InstallPrompt } from "@/components/InstallPrompt";
 import { Footer } from "@/components/Footer";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Planilha from "./pages/Planilha";
+import PlanilhaBackup from "./pages/PlanilhaBackup";
 import Perfil from "./pages/Perfil";
 import Configuracoes from "./pages/Configuracoes";
 import Ajuda from "./pages/Ajuda";
@@ -27,7 +27,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/planilha" element={<Planilha />} />
+              <Route path="/planilha" element={<PlanilhaBackup />} />
               <Route path="/perfil" element={<Perfil />} />
               <Route path="/configuracoes" element={<Configuracoes />} />
               <Route path="/ajuda" element={<Ajuda />} />
