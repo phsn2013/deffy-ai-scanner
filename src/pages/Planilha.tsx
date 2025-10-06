@@ -4,8 +4,26 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, TrendingUp, TrendingDown, DollarSign, Calendar, Plus, Trash2 } from "lucide-react";
+import { 
+  ArrowLeft, 
+  TrendingUp, 
+  TrendingDown, 
+  DollarSign, 
+  Calendar, 
+  Plus, 
+  Trash2,
+  Target,
+  TrendingUpDown,
+  Percent,
+  Activity
+} from "lucide-react";
 import { toast } from "sonner";
+import { MetricCard } from "@/components/dashboard/MetricCard";
+import { PeriodFilter, Period } from "@/components/dashboard/PeriodFilter";
+import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
+import { WinRateChart } from "@/components/dashboard/WinRateChart";
+import { ProfitLossChart } from "@/components/dashboard/ProfitLossChart";
+import { useTradingStats } from "@/hooks/useTradingStats";
 
 interface Operation {
   id: string;
@@ -24,22 +42,16 @@ const Planilha = () => {
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>("month");
 
-  const currentBalance = initialBalance + operations.reduce((acc, op) => {
-    return acc + (op.type === "profit" ? op.value : -op.value);
-  }, 0);
+  const stats = useTradingStats(operations, initialBalance, selectedPeriod);
 
-  const totalProfit = operations
-    .filter(op => op.type === "profit")
-    .reduce((acc, op) => acc + op.value, 0);
-
-  const totalLoss = operations
-    .filter(op => op.type === "loss")
-    .reduce((acc, op) => acc + op.value, 0);
-
-  const profitLossPercentage = initialBalance > 0 
-    ? ((currentBalance - initialBalance) / initialBalance) * 100 
-    : 0;
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+  };
 
   const handleAddOperation = (type: "profit" | "loss") => {
     const value = parseFloat(newOperationValue);
@@ -68,16 +80,9 @@ const Planilha = () => {
     toast.success("Operação removida");
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
-
   const getOperationsByDate = () => {
     const grouped: { [key: string]: Operation[] } = {};
-    operations.forEach(op => {
+    stats.filteredOperations.forEach(op => {
       if (!grouped[op.date]) {
         grouped[op.date] = [];
       }
@@ -92,85 +97,126 @@ const Planilha = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/5 backdrop-blur-xl border-b border-primary/10">
-        <div className="container max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/")}
-              className="hover:bg-primary/10"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-glow to-primary tracking-tight">
-                Gerenciamento de Banca
-              </h1>
-              <p className="text-muted-foreground text-xs tracking-wider uppercase">
-                Controle suas finanças de trading
-              </p>
+        <div className="container max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/")}
+                className="hover:bg-primary/10"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-glow to-primary tracking-tight">
+                  Dashboard de Trading
+                </h1>
+                <p className="text-muted-foreground text-xs tracking-wider uppercase">
+                  Análise completa de performance
+                </p>
+              </div>
             </div>
+            <PeriodFilter value={selectedPeriod} onChange={setSelectedPeriod} />
           </div>
         </div>
       </header>
 
-      <div className="container max-w-6xl mx-auto px-4 py-8">
-        {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card className="p-6 bg-card/50 backdrop-blur-xl border-primary/20">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <DollarSign className="h-5 w-5 text-primary" />
-              </div>
-              <span className="text-sm text-muted-foreground uppercase tracking-wider">Banca Inicial</span>
-            </div>
-            <p className="text-2xl font-bold text-foreground">{formatCurrency(initialBalance)}</p>
-          </Card>
+      <div className="container max-w-7xl mx-auto px-4 py-8">
+        {/* Main Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <MetricCard
+            title="Saldo Atual"
+            value={formatCurrency(stats.currentBalance)}
+            subtitle={`${stats.roi >= 0 ? '+' : ''}${stats.roi.toFixed(2)}% ROI`}
+            icon={DollarSign}
+            colorScheme={stats.currentBalance >= initialBalance ? "success" : "danger"}
+            trend={stats.currentBalance >= initialBalance ? "up" : "down"}
+          />
+          
+          <MetricCard
+            title="Lucro Líquido"
+            value={formatCurrency(stats.netProfit)}
+            subtitle={`${stats.totalTrades} operações`}
+            icon={TrendingUpDown}
+            colorScheme={stats.netProfit >= 0 ? "success" : "danger"}
+          />
 
-          <Card className="p-6 bg-card/50 backdrop-blur-xl border-primary/20">
-            <div className="flex items-center gap-3 mb-2">
-              <div className={`p-2 rounded-lg ${currentBalance >= initialBalance ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
-                <DollarSign className={`h-5 w-5 ${currentBalance >= initialBalance ? 'text-green-500' : 'text-red-500'}`} />
-              </div>
-              <span className="text-sm text-muted-foreground uppercase tracking-wider">Saldo Atual</span>
-            </div>
-            <p className={`text-2xl font-bold ${currentBalance >= initialBalance ? 'text-green-500' : 'text-red-500'}`}>
-              {formatCurrency(currentBalance)}
-            </p>
-            <p className={`text-sm mt-1 ${profitLossPercentage >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {profitLossPercentage >= 0 ? '+' : ''}{profitLossPercentage.toFixed(2)}%
-            </p>
-          </Card>
+          <MetricCard
+            title="Win Rate"
+            value={`${stats.winRate.toFixed(1)}%`}
+            subtitle={`${stats.wins}W / ${stats.losses}L`}
+            icon={Target}
+            colorScheme={stats.winRate >= 50 ? "success" : "danger"}
+          />
 
-          <Card className="p-6 bg-card/50 backdrop-blur-xl border-primary/20">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-green-500/10">
-                <TrendingUp className="h-5 w-5 text-green-500" />
-              </div>
-              <span className="text-sm text-muted-foreground uppercase tracking-wider">Total Lucros</span>
-            </div>
-            <p className="text-2xl font-bold text-green-500">{formatCurrency(totalProfit)}</p>
-          </Card>
-
-          <Card className="p-6 bg-card/50 backdrop-blur-xl border-primary/20">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-red-500/10">
-                <TrendingDown className="h-5 w-5 text-red-500" />
-              </div>
-              <span className="text-sm text-muted-foreground uppercase tracking-wider">Total Perdas</span>
-            </div>
-            <p className="text-2xl font-bold text-red-500">{formatCurrency(totalLoss)}</p>
-          </Card>
+          <MetricCard
+            title="Profit Factor"
+            value={stats.profitFactor === Infinity ? "∞" : stats.profitFactor.toFixed(2)}
+            subtitle="Lucro / Prejuízo"
+            icon={Activity}
+            colorScheme={stats.profitFactor >= 1.5 ? "success" : stats.profitFactor >= 1 ? "warning" : "danger"}
+          />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Secondary Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <MetricCard
+            title="Total em Lucros"
+            value={formatCurrency(stats.totalProfit)}
+            subtitle={`Média: ${formatCurrency(stats.avgProfit)}`}
+            icon={TrendingUp}
+            colorScheme="success"
+          />
+
+          <MetricCard
+            title="Total em Prejuízos"
+            value={formatCurrency(stats.totalLoss)}
+            subtitle={`Média: ${formatCurrency(stats.avgLoss)}`}
+            icon={TrendingDown}
+            colorScheme="danger"
+          />
+
+          <MetricCard
+            title="Total de Trades"
+            value={stats.totalTrades.toString()}
+            subtitle={`${stats.wins} vitórias`}
+            icon={Calendar}
+            colorScheme="primary"
+          />
+
+          <MetricCard
+            title="Banca Inicial"
+            value={formatCurrency(initialBalance)}
+            icon={DollarSign}
+            colorScheme="primary"
+          />
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            <PerformanceChart data={stats.chartData} />
+          </div>
+          
+          <div>
+            <WinRateChart wins={stats.wins} losses={stats.losses} />
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <ProfitLossChart data={stats.chartData} />
+        </div>
+
+        {/* Operations Management */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Input Section */}
           <div className="space-y-6">
             {/* Initial Balance */}
             <Card className="p-6 bg-card/50 backdrop-blur-xl border-primary/20">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-primary" />
-                Banca Inicial
+                Configurar Banca Inicial
               </h3>
               <div className="space-y-2">
                 <Label htmlFor="initial-balance">Valor Inicial</Label>
@@ -189,13 +235,13 @@ const Planilha = () => {
             <Card className="p-6 bg-card/50 backdrop-blur-xl border-primary/20">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <Plus className="h-5 w-5 text-primary" />
-                Nova Operação
+                Registrar Nova Operação
               </h3>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="operation-date">Data</Label>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                     <Input
                       id="operation-date"
                       type="date"
@@ -255,12 +301,12 @@ const Planilha = () => {
           <Card className="p-6 bg-card/50 backdrop-blur-xl border-primary/20">
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              Histórico de Operações
+              Histórico de Operações ({selectedPeriod})
             </h3>
-            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+            <div className="space-y-4 max-h-[700px] overflow-y-auto pr-2">
               {Object.keys(operationsByDate).length === 0 ? (
                 <p className="text-center text-muted-foreground py-8">
-                  Nenhuma operação registrada
+                  Nenhuma operação no período selecionado
                 </p>
               ) : (
                 Object.keys(operationsByDate)

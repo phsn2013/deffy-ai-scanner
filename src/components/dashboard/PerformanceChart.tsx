@@ -1,0 +1,93 @@
+import { Card } from "@/components/ui/card";
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { TrendingUp } from "lucide-react";
+
+interface PerformanceChartProps {
+  data: {
+    date: string;
+    balance: number;
+    profit: number;
+    loss: number;
+  }[];
+}
+
+export const PerformanceChart = ({ data }: PerformanceChartProps) => {
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-card/95 backdrop-blur-xl border border-primary/20 p-3 rounded-lg shadow-xl">
+          <p className="text-sm font-bold mb-2 text-foreground">
+            {payload[0].payload.date}
+          </p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} className="text-xs" style={{ color: entry.color }}>
+              {entry.name}: {formatCurrency(entry.value)}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <Card className="p-6 bg-card/50 backdrop-blur-xl border-primary/20">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <TrendingUp className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-foreground">
+              Evolução do Saldo
+            </h3>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">
+              Desempenho ao longo do tempo
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-[300px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data}>
+            <defs>
+              <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--primary) / 0.1)" />
+            <XAxis 
+              dataKey="date" 
+              stroke="hsl(var(--muted-foreground))"
+              style={{ fontSize: "12px" }}
+            />
+            <YAxis 
+              stroke="hsl(var(--muted-foreground))"
+              style={{ fontSize: "12px" }}
+              tickFormatter={formatCurrency}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Area
+              type="monotone"
+              dataKey="balance"
+              stroke="hsl(var(--primary))"
+              strokeWidth={3}
+              fill="url(#colorBalance)"
+              name="Saldo"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    </Card>
+  );
+};
