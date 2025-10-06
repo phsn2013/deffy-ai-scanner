@@ -63,6 +63,11 @@ const Estudo = () => {
           enable_publishing: false,
           allow_symbol_change: true,
           container_id: "tradingview_chart",
+          studies: [
+            "MASimple@tv-basicstudies",
+            "RSI@tv-basicstudies",
+            "MACD@tv-basicstudies",
+          ],
           show_popup_button: true,
           popup_width: "1000",
           popup_height: "650",
