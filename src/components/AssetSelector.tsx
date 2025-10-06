@@ -189,9 +189,9 @@ export const AssetSelector = ({ value, onChange }: AssetSelectorProps) => {
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-sm font-bold text-green-500">{asset.percentage}</span>
-                      <button className="p-1 rounded-full border border-primary/20 hover:bg-primary/10">
+                      <div className="p-1 rounded-full border border-primary/20 hover:bg-primary/10">
                         <Info className="h-4 w-4" />
-                      </button>
+                      </div>
                     </div>
                   </button>
                 ))}
