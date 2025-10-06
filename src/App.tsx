@@ -11,7 +11,6 @@ import Planilha from "./pages/Planilha";
 import Perfil from "./pages/Perfil";
 import Configuracoes from "./pages/Configuracoes";
 import Ajuda from "./pages/Ajuda";
-import Estudo from "./pages/Estudo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,7 +31,6 @@ const App = () => (
               <Route path="/perfil" element={<Perfil />} />
               <Route path="/configuracoes" element={<Configuracoes />} />
               <Route path="/ajuda" element={<Ajuda />} />
-              <Route path="/estudo" element={<Estudo />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
