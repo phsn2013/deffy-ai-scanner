@@ -1,4 +1,4 @@
-const CACHE_NAME = 'deffy-v2';
+const CACHE_NAME = `deffy-v${Date.now()}`;
 const urlsToCache = [
   '/',
   '/index.html',
@@ -32,32 +32,31 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response;
+        // Check if valid response
+        if (!response || response.status !== 200) {
+          return caches.match(event.request).then((cachedResponse) => {
+            return cachedResponse || response;
+          });
         }
 
-        return fetch(event.request).then((response) => {
-          // Check if valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
+        // Clone the response
+        const responseToCache = response.clone();
 
-          // Clone the response
-          const responseToCache = response.clone();
+        caches.open(CACHE_NAME)
+          .then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
 
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-
-          return response;
-        });
+        return response;
+      })
+      .catch(() => {
+        // Network failed, try cache
+        return caches.match(event.request);
       })
   );
 });
