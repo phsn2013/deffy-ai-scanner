@@ -35,7 +35,7 @@ interface Operation {
 
 const Planilha = () => {
   const navigate = useNavigate();
-  const [initialBalance, setInitialBalance] = useState<number>(1000);
+  const [initialBalance, setInitialBalance] = useState<number>(0);
   const [operations, setOperations] = useState<Operation[]>([]);
   const [newOperationValue, setNewOperationValue] = useState<string>("");
   const [newOperationNote, setNewOperationNote] = useState<string>("");
