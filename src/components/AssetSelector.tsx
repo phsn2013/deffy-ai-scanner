@@ -11,6 +11,15 @@ import dogeIcon from "@/assets/crypto/doge.png";
 import solIcon from "@/assets/crypto/sol.png";
 import trxIcon from "@/assets/crypto/trx.png";
 import usdtIcon from "@/assets/crypto/usdt.png";
+import eurUsdIcon from "@/assets/forex/eur-usd.svg";
+import gbpUsdIcon from "@/assets/forex/gbp-usd.svg";
+import usdJpyIcon from "@/assets/forex/usd-jpy.svg";
+import audCadIcon from "@/assets/forex/aud-cad.svg";
+import eurBrlIcon from "@/assets/forex/eur-brl.webp";
+import gbpJpyIcon from "@/assets/forex/gbp-jpy.svg";
+import eurJpyIcon from "@/assets/forex/eur-jpy.svg";
+import audJpyIcon from "@/assets/forex/aud-jpy.svg";
+import eurGbpIcon from "@/assets/forex/eur-gbp.svg";
 
 export type AssetType = "forex" | "crypto" | "stocks";
 
@@ -25,11 +34,15 @@ interface Asset {
 
 const ASSETS: Asset[] = [
   // Forex
-  { id: "eur-usd", name: "EUR/USD", symbol: "EUR/USD", type: "forex", percentage: "88%", icon: "🇪🇺🇺🇸" },
-  { id: "gbp-usd", name: "GBP/USD", symbol: "GBP/USD", type: "forex", percentage: "85%", icon: "🇬🇧🇺🇸" },
-  { id: "usd-jpy", name: "USD/JPY", symbol: "USD/JPY", type: "forex", percentage: "82%", icon: "🇺🇸🇯🇵" },
-  { id: "aud-usd", name: "AUD/USD", symbol: "AUD/USD", type: "forex", percentage: "84%", icon: "🇦🇺🇺🇸" },
-  { id: "usd-cad", name: "USD/CAD", symbol: "USD/CAD", type: "forex", percentage: "83%", icon: "🇺🇸🇨🇦" },
+  { id: "eur-usd", name: "EUR/USD", symbol: "EUR/USD", type: "forex", percentage: "88%", icon: eurUsdIcon },
+  { id: "gbp-usd", name: "GBP/USD", symbol: "GBP/USD", type: "forex", percentage: "85%", icon: gbpUsdIcon },
+  { id: "usd-jpy", name: "USD/JPY", symbol: "USD/JPY", type: "forex", percentage: "82%", icon: usdJpyIcon },
+  { id: "aud-cad", name: "AUD/CAD", symbol: "AUD/CAD", type: "forex", percentage: "83%", icon: audCadIcon },
+  { id: "eur-brl", name: "EUR/BRL", symbol: "EUR/BRL", type: "forex", percentage: "86%", icon: eurBrlIcon },
+  { id: "gbp-jpy", name: "GBP/JPY", symbol: "GBP/JPY", type: "forex", percentage: "84%", icon: gbpJpyIcon },
+  { id: "eur-jpy", name: "EUR/JPY", symbol: "EUR/JPY", type: "forex", percentage: "87%", icon: eurJpyIcon },
+  { id: "aud-jpy", name: "AUD/JPY", symbol: "AUD/JPY", type: "forex", percentage: "81%", icon: audJpyIcon },
+  { id: "eur-gbp", name: "EUR/GBP", symbol: "EUR/GBP", type: "forex", percentage: "89%", icon: eurGbpIcon },
   
   // Crypto
   { id: "btc", name: "Bitcoin (OTC)", symbol: "BTC", type: "crypto", percentage: "88%", icon: btcIcon },
@@ -78,14 +91,6 @@ export const AssetSelector = ({ value, onChange }: AssetSelectorProps) => {
 
   const getDisplayValue = () => {
     if (!selectedAsset) return "Selecionar";
-    
-    if (selectedAsset.type === "forex") {
-      return (
-        <div className="text-lg">
-          {selectedAsset.icon}
-        </div>
-      );
-    }
     
     return (
       <img 
@@ -169,20 +174,14 @@ export const AssetSelector = ({ value, onChange }: AssetSelectorProps) => {
                     className="w-full flex items-center justify-between p-3 rounded-lg bg-transparent hover:bg-primary/10 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
-                      {asset.type === "forex" ? (
-                        <div className="w-8 h-8 flex items-center justify-center text-lg">
-                          {asset.icon}
-                        </div>
-                      ) : (
-                        <img 
-                          src={asset.icon} 
-                          alt={asset.name}
-                          className="w-8 h-8 rounded-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src = `https://ui-avatars.com/api/?name=${asset.symbol}&background=random`;
-                          }}
-                        />
-                      )}
+                      <img 
+                        src={asset.icon} 
+                        alt={asset.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${asset.symbol}&background=random`;
+                        }}
+                      />
                       <div className="text-left">
                         <p className="text-sm font-medium text-foreground">{asset.name}</p>
                         <p className="text-xs text-muted-foreground">Binário</p>
