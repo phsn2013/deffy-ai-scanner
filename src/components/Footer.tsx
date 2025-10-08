@@ -22,7 +22,7 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full border-t border-border/50 bg-card/20 backdrop-blur-sm mt-auto">
+    <footer className="sticky bottom-0 w-full border-t border-border/50 bg-card/20 backdrop-blur-sm z-40">
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Live Clock */}
