@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Headphones, Volume2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const Footer = () => {
+  const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -66,7 +68,12 @@ export const Footer = () => {
               <Button variant="ghost" size="icon" className="h-7 w-7">
                 <Volume2 className="w-4 h-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-7 w-7"
+                onClick={() => navigate('/configuracoes')}
+              >
                 <Settings className="w-4 h-4" />
               </Button>
             </div>
