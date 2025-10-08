@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,36 +7,34 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { ArrowLeft, Bell, Moon, Sun, Volume2, Globe, Shield, Palette } from "lucide-react";
 import { toast } from "sonner";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const Configuracoes = () => {
   const navigate = useNavigate();
-  const [settings, setSettings] = useState({
-    notifications: true,
-    soundEffects: true,
-    darkMode: false,
-    language: "pt-BR",
-    soundVolume: 30,
-    autoAnalysis: false,
-    saveHistory: true,
-    theme: "gold",
-  });
+  const { settings, updateSettings, resetSettings, saveSettings } = useSettings();
 
   const handleSave = () => {
+    saveSettings();
     toast.success("Configurações salvas com sucesso!");
   };
 
   const handleReset = () => {
-    setSettings({
-      notifications: true,
-      soundEffects: true,
-      darkMode: false,
-      language: "pt-BR",
-      soundVolume: 30,
-      autoAnalysis: false,
-      saveHistory: true,
-      theme: "gold",
-    });
+    resetSettings();
     toast.success("Configurações restauradas para o padrão!");
+  };
+
+  const handleNotificationToggle = async (checked: boolean) => {
+    if (checked && 'Notification' in window) {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        updateSettings({ notifications: checked });
+        toast.success("Notificações ativadas!");
+      } else {
+        toast.error("Permissão de notificação negada");
+      }
+    } else {
+      updateSettings({ notifications: checked });
+    }
   };
 
   return (
@@ -66,7 +63,7 @@ const Configuracoes = () => {
         </div>
       </header>
 
-      <div className="container max-w-4xl mx-auto px-4 py-8">
+      <div className="container max-w-4xl mx-auto px-4 py-8 pb-32">
         <div className="space-y-6">
           {/* Appearance Settings */}
           <Card className="p-6 bg-card/50 backdrop-blur-xl border-primary/20">
@@ -87,17 +84,26 @@ const Configuracoes = () => {
                 </div>
                 <Switch
                   checked={settings.darkMode}
-                  onCheckedChange={(checked) => setSettings({ ...settings, darkMode: checked })}
+                  onCheckedChange={(checked) => {
+                    updateSettings({ darkMode: checked });
+                    toast.success(checked ? "Modo escuro ativado" : "Modo claro ativado");
+                  }}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label>Tema de Cor</Label>
-                <Select value={settings.theme} onValueChange={(value) => setSettings({ ...settings, theme: value })}>
+                <Select 
+                  value={settings.theme} 
+                  onValueChange={(value) => {
+                    updateSettings({ theme: value });
+                    toast.success("Tema alterado!");
+                  }}
+                >
                   <SelectTrigger className="bg-white/5 border-primary/20">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/20">
+                  <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/20 z-[100]">
                     <SelectItem value="gold">Dourado (Padrão)</SelectItem>
                     <SelectItem value="blue">Azul</SelectItem>
                     <SelectItem value="purple">Roxo</SelectItem>
@@ -124,7 +130,7 @@ const Configuracoes = () => {
                 </div>
                 <Switch
                   checked={settings.notifications}
-                  onCheckedChange={(checked) => setSettings({ ...settings, notifications: checked })}
+                  onCheckedChange={handleNotificationToggle}
                 />
               </div>
             </div>
@@ -146,7 +152,10 @@ const Configuracoes = () => {
                 </div>
                 <Switch
                   checked={settings.soundEffects}
-                  onCheckedChange={(checked) => setSettings({ ...settings, soundEffects: checked })}
+                  onCheckedChange={(checked) => {
+                    updateSettings({ soundEffects: checked });
+                    toast.success(checked ? "Sons ativados" : "Sons desativados");
+                  }}
                 />
               </div>
 
@@ -155,7 +164,15 @@ const Configuracoes = () => {
                 <div className="flex items-center gap-4">
                   <Slider
                     value={[settings.soundVolume]}
-                    onValueChange={(value) => setSettings({ ...settings, soundVolume: value[0] })}
+                    onValueChange={(value) => updateSettings({ soundVolume: value[0] })}
+                    onValueCommit={(value) => {
+                      // Play test sound when user releases slider
+                      if (settings.soundEffects) {
+                        const audio = new Audio('/sounds/toque-buttons.mp3');
+                        audio.volume = value[0] / 100;
+                        audio.play().catch(() => {});
+                      }
+                    }}
                     max={100}
                     step={1}
                     className="flex-1"
@@ -175,11 +192,17 @@ const Configuracoes = () => {
             </h3>
             <div className="space-y-2">
               <Label>Idioma do Aplicativo</Label>
-              <Select value={settings.language} onValueChange={(value) => setSettings({ ...settings, language: value })}>
+              <Select 
+                value={settings.language} 
+                onValueChange={(value) => {
+                  updateSettings({ language: value });
+                  toast.success("Idioma alterado!");
+                }}
+              >
                 <SelectTrigger className="bg-white/5 border-primary/20">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/20">
+                <SelectContent className="bg-card/95 backdrop-blur-xl border-primary/20 z-[100]">
                   <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
                   <SelectItem value="en-US">English (US)</SelectItem>
                   <SelectItem value="es-ES">Español</SelectItem>
@@ -204,7 +227,10 @@ const Configuracoes = () => {
                 </div>
                 <Switch
                   checked={settings.saveHistory}
-                  onCheckedChange={(checked) => setSettings({ ...settings, saveHistory: checked })}
+                  onCheckedChange={(checked) => {
+                    updateSettings({ saveHistory: checked });
+                    toast.success(checked ? "Histórico ativado" : "Histórico desativado");
+                  }}
                 />
               </div>
 
@@ -217,7 +243,10 @@ const Configuracoes = () => {
                 </div>
                 <Switch
                   checked={settings.autoAnalysis}
-                  onCheckedChange={(checked) => setSettings({ ...settings, autoAnalysis: checked })}
+                  onCheckedChange={(checked) => {
+                    updateSettings({ autoAnalysis: checked });
+                    toast.success(checked ? "Análise automática ativada" : "Análise automática desativada");
+                  }}
                 />
               </div>
             </div>

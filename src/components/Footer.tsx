@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { Headphones, Volume2, Settings } from "lucide-react";
+import { Headphones, Volume2, Settings, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useSettings } from "@/contexts/SettingsContext";
+import { toast } from "sonner";
 
 export const Footer = () => {
   const navigate = useNavigate();
+  const { settings, updateSettings } = useSettings();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -38,6 +41,9 @@ export const Footer = () => {
               variant="default" 
               size="sm"
               className="gap-2 text-xs font-bold bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => {
+                window.location.href = 'mailto:support@deffy.com.br';
+              }}
             >
               <Headphones className="w-4 h-4" />
               SUPORTE
@@ -65,8 +71,16 @@ export const Footer = () => {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="h-7 w-7">
-                <Volume2 className="w-4 h-4" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-7 w-7"
+                onClick={() => {
+                  updateSettings({ soundEffects: !settings.soundEffects });
+                  toast.success(settings.soundEffects ? "Sons desativados" : "Sons ativados");
+                }}
+              >
+                {settings.soundEffects ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
               </Button>
               <Button 
                 variant="ghost" 
