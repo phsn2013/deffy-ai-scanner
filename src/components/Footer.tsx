@@ -33,22 +33,22 @@ export const Footer = () => {
           {/* Left - Support */}
           <div className="flex items-center gap-3">
             <Button 
-              variant="destructive" 
+              variant="default" 
               size="sm"
-              className="gap-2 text-xs font-bold"
+              className="gap-2 text-xs font-bold bg-green-600 hover:bg-green-700 text-white"
             >
               <Headphones className="w-4 h-4" />
               SUPORTE
             </Button>
             <span className="text-xs text-muted-foreground hidden sm:inline">
-              support@deffy.com
+              support@deffy.com.br
             </span>
           </div>
 
           {/* Center - Slogan */}
           <div className="hidden md:block">
             <p className="text-xs font-bold text-foreground uppercase tracking-wide">
-              Todo dia, a toda hora
+              AI Trading Scanner Technology
             </p>
           </div>
 
