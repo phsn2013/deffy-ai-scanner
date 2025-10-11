@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { Headphones, Volume2, Settings, VolumeX } from "lucide-react";
+import { Headphones, Volume2, Settings, VolumeX, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useSettings } from "@/contexts/SettingsContext";
 import { toast } from "sonner";
+import { useAdmin } from "@/hooks/useAdmin";
 
 export const Footer = () => {
   const navigate = useNavigate();
   const { settings, updateSettings } = useSettings();
+  const { isAdmin } = useAdmin();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -90,6 +92,17 @@ export const Footer = () => {
               >
                 <Settings className="w-4 h-4" />
               </Button>
+              {isAdmin && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-7 w-7 text-primary"
+                  onClick={() => navigate('/admin')}
+                  title="Painel Admin"
+                >
+                  <Shield className="w-4 h-4" />
+                </Button>
+              )}
             </div>
             <div className="h-4 w-px bg-border/50 hidden sm:block"></div>
             <div className="hidden sm:block">
