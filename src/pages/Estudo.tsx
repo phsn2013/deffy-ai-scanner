@@ -44,6 +44,7 @@ const Estudo = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedSymbol, setSelectedSymbol] = useState("BINANCE:BTCUSDT");
   const [selectedCategory, setSelectedCategory] = useState("crypto");
+  const [selectedTimeframe, setSelectedTimeframe] = useState("D");
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -54,7 +55,7 @@ const Estudo = () => {
         new (window as any).TradingView.widget({
           autosize: true,
           symbol: selectedSymbol,
-          interval: "D",
+          interval: selectedTimeframe,
           timezone: "America/Sao_Paulo",
           theme: "dark",
           style: "1",
@@ -95,7 +96,7 @@ const Estudo = () => {
         document.head.removeChild(script);
       }
     };
-  }, [selectedSymbol]);
+  }, [selectedSymbol, selectedTimeframe]);
 
   const handleSymbolChange = (value: string) => {
     setSelectedSymbol(value);
@@ -146,6 +147,23 @@ const Estudo = () => {
                       {symbol.label}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Tempo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 minuto</SelectItem>
+                  <SelectItem value="5">5 minutos</SelectItem>
+                  <SelectItem value="15">15 minutos</SelectItem>
+                  <SelectItem value="30">30 minutos</SelectItem>
+                  <SelectItem value="60">1 hora</SelectItem>
+                  <SelectItem value="240">4 horas</SelectItem>
+                  <SelectItem value="D">1 dia</SelectItem>
+                  <SelectItem value="W">1 semana</SelectItem>
+                  <SelectItem value="M">1 mês</SelectItem>
                 </SelectContent>
               </Select>
             </div>
