@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NotesPanel } from "@/components/NotesPanel";
 import {
   Select,
   SelectContent,
@@ -126,6 +127,8 @@ const Estudo = () => {
             </div>
 
             <div className="flex items-center gap-3">
+              <NotesPanel symbol={selectedSymbol} />
+              
               <Select value={selectedCategory} onValueChange={handleCategoryChange}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue placeholder="Categoria" />
