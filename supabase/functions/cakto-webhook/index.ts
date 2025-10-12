@@ -23,13 +23,24 @@ serve(async (req) => {
   try {
     console.log('Received webhook from Cakto');
 
+    // Validar webhook secret da Cakto
+    const webhookSecret = Deno.env.get('CAKTO_WEBHOOK_SECRET');
+    const receivedSecret = req.headers.get('x-webhook-secret') || req.headers.get('authorization');
+    
+    if (webhookSecret && receivedSecret !== webhookSecret) {
+      console.error('Invalid webhook secret');
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     // Parse webhook payload
     const payload: CaktoWebhookPayload = await req.json();
     console.log('Webhook payload:', payload);
-
-    // TODO: Validar webhook secret/signature da Cakto
-    // const webhookSecret = Deno.env.get('CAKTO_WEBHOOK_SECRET');
-    // Implemente a validação específica da Cakto aqui
 
     if (!payload.email) {
       throw new Error('Email não fornecido no webhook');
