@@ -1,7 +1,1 @@
 project_id = "kljpxxpwwljjjoojojlm"
-
-[functions.analyze-chart]
-verify_jwt = false
-
-[functions.cakto-webhook]
-verify_jwt = false
